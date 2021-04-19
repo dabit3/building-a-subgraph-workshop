@@ -235,5 +235,12 @@ When you click on the Subgraph, it should open the Graph explorer:
 Now that we are in the dashboard, we should be able to start querying for data. To do so, run the following query to get a list of tokens and their metadata:
 
 ```graphql
-
+{
+  tokens(first: 5) {
+    id
+    tokenID
+    contentURI
+    metadataURI
+  }
+}
 ```
