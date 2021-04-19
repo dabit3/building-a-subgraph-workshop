@@ -169,6 +169,8 @@ export function handleTransfer(event: TransferEvent): void {
 }
 ```
 
+These mappings will handle events for when a new token is created, transfered, or updated. When these events fire, the mappings will save the data into the Subgraph.
+
 ## Updating the Subgraph with the entities and mappings
 
 Now we can configure the __subgraph.yaml__ to use the entities and mappings that we have just created.
