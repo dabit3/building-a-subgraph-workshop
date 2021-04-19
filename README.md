@@ -19,7 +19,7 @@ Next, go to [the dashboard](https://thegraph.com/explorer/dashboard) and click o
 Here, set your graph up with the following properties:
 
 - Subgraph Name - __Zoranftgraph__
-- SUBTITLE - __A subgraph for querying NFTs__
+- Subtitle - __A subgraph for querying NFTs__
 - Optional - Fill the description and GITHUB URL properties
 
 Once the subgraph is created, we will initialize the subgraph locally.
