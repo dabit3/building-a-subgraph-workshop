@@ -141,29 +141,27 @@ import {
 } from '../generated/schema'
 
 export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
-  let { params: { _tokenId, _uri }} = event;
-  let token = Token.load(_tokenId.toString());
-  token.contentURI = _uri;
+  let token = Token.load(event.params._tokenId.toString());
+  token.contentURI = event.params._uri;
   token.save();
 }
 
 export function handleTransfer(event: TransferEvent): void {
-  let { address, params: { tokenId, to } } = event;
-  let token = Token.load(tokenId.toString());
+  let token = Token.load(event.params.tokenId.toString());
   if (!token) {
-    token = new Token(tokenId.toString());
-    token.creator = to.toHexString();
-    token.tokenID = tokenId;
+    token = new Token(event.params.tokenId.toString());
+    token.creator = event.params.to.toHexString();
+    token.tokenID = event.params.tokenId;
 
-    let tokenContract = TokenContract.bind(address);
-    token.contentURI = tokenContract.tokenURI(tokenId);
+    let tokenContract = TokenContract.bind(event.address);
+    token.contentURI = tokenContract.tokenURI(event.params.tokenId);
   }
-  token.owner = to.toHexString();
+  token.owner = event.params.to.toHexString();
   token.save();
 
-  let user = User.load(to.toHexString());
+  let user = User.load(event.params.to.toHexString());
   if (!user) {
-    user = new User(to.toHexString());
+    user = new User(event.params.to.toHexString());
     user.save();
   }
 }
@@ -200,5 +198,42 @@ source:
   startBlock: 11565020
 ```
 
+### Running a build
+
+Next, let's run a build to make sure that everything is configured properly. To do so, run the `build` command:
+
+```sh
+$ graph build
+```
+
+If the build is successful, you should see a new __build__ folder generated in your root directory.
+
 ## Deploying the subgraph
 
+To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the Subgraph you created in the Graph console:
+
+![Graph Console](accesstoken.png)
+
+Next, run the following command:
+
+```sh
+$ graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>
+
+$ yarn deploy
+```
+
+Once the Subgraph is deployed, you should see it show up in your dashboard:
+
+![Graph Dashboard](thedashboard.png)
+
+When you click on the Subgraph, it should open the Graph explorer:
+
+![The Zora Subgraph](thesubgraph.png)
+
+## Querying for data
+
+Now that we are in the dashboard, we should be able to start querying for data. To do so, run the following query to get a list of tokens and their metadata:
+
+```graphql
+
+```
