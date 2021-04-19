@@ -176,8 +176,29 @@ Now we can configure the __subgraph.yaml__ to use the entities and mappings that
 To do so, first update the `dataSources.mapping.entities` field with the `User` and `Token` entities:
 
 ```yaml
-      entities:
-        - Token
-        - User
+entities:
+  - Token
+  - User
 ```
+
+Next, update the `dataSources.mapping.eventHandlers` to include only the two handlers we have defined:
+
+```yaml
+eventHandlers:
+  - event: TokenURIUpdated(indexed uint256,address,string)
+    handler: handleTokenURIUpdated
+  - event: Transfer(indexed address,indexed address,indexed uint256)
+    handler: handleTransfer
+```
+
+Finally, update the configuration to add the `startBlock`:
+
+```yaml
+source:
+  address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
+  abi: Token
+  startBlock: 11565020
+```
+
+## Deploying the subgraph
 
