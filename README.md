@@ -168,3 +168,16 @@ export function handleTransfer(event: TransferEvent): void {
   }
 }
 ```
+
+## Updating the Subgraph with the entities and mappings
+
+Now we can configure the __subgraph.yaml__ to use the entities and mappings that we have just created.
+
+To do so, first update the `dataSources.mapping.entities` field with the `User` and `Token` entities:
+
+```yaml
+      entities:
+        - Token
+        - User
+```
+
