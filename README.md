@@ -87,7 +87,7 @@ The entries in __subgraph.yaml__ that we will be working with are:
 - `dataSources.source.startBlock` (optional): the number of the block that the data source starts indexing from. In most cases we suggest using the block in which the contract was created.
 - `dataSources.mapping.entities` : the entities that the data source writes to the store. The schema for each entity is defined in the the schema.graphql file.
 - `dataSources.mapping.abis`: one or more named ABI files for the source contract as well as any other smart contracts that you interact with from within the mappings.
-- `dataSources.mapping.eventHandlers`: lists the smart contract events this subgraph reacts to and the handlers in the mapping—./src/mapping.ts in the example—that transform these events into entities in the store.
+- `dataSources.mapping.eventHandlers`: lists the smart contract events this subgraph reacts to and the handlers in the __mapping—./src/mapping.ts__ in the example—that transform these events into entities in the store.
 
 ### Defining the entities
 
