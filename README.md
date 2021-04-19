@@ -232,11 +232,11 @@ When you click on the Subgraph, it should open the Graph explorer:
 
 ## Querying for data
 
-Now that we are in the dashboard, we should be able to start querying for data. To do so, run the following query to get a list of tokens and their metadata:
+Now that we are in the dashboard, we should be able to start querying for data. Run the following query to get a list of tokens and their metadata:
 
 ```graphql
 {
-  tokens(first: 5) {
+  tokens {
     id
     tokenID
     contentURI
@@ -244,3 +244,83 @@ Now that we are in the dashboard, we should be able to start querying for data. 
   }
 }
 ```
+
+We can also configure the order direction:
+
+```graphql
+{
+  tokens(
+    orderBy:createdAtTimestamp,
+    orderDirection: desc
+  ) {
+    id
+    tokenID
+    contentURI
+    metadataURI
+    createdAtTimestamp
+  }
+}
+```
+
+Or choose to skip forward a certain number of results to implement some basic pagination:
+
+```graphql
+{
+  tokens(
+    skip: 100,
+    orderBy:createdAtTimestamp,
+    orderDirection: desc
+  ) {
+    id
+    tokenID
+    contentURI
+    metadataURI
+    createdAtTimestamp
+  }
+}
+
+```
+
+## Updating a Subgraph
+
+What if we want to make some changes to the subgraph and then redeploy? This is pretty easy, so let's learn how to do it.
+
+Let's say that we want to add a new feature to our Subgraph. In addition to our existing querying capabilities, let's say that we wanted to add full text search so that we may be able to search for a certain NFT or a keyword. We can do this by defining a full text search field to our Subgraph.
+
+Let's update __schema.graphql__ with the following:
+
+```graphql
+type _Schema_
+  @fulltext(
+    name: "metadataSearch",
+    language: en
+    algorithm: rank,
+    include: [
+      {
+        entity: "Token",
+        fields: [
+          { name: "metadataURI" }
+        ]
+      }
+    ]
+  )
+
+
+type Token @entity {
+  id: ID!
+  tokenID: BigInt!
+  contentURI: String!
+  metadataURI: String!
+  creator: User!
+  owner: User!
+  createdAtTimestamp: BigInt!
+}
+
+type User @entity {
+  id: ID!
+  tokens: [Token!]! @derivedFrom(field: "owner")
+  created: [Token!]! @derivedFrom(field: "creator")
+}
+```
+
+> Click [here](https://thegraph.com/docs/define-a-subgraph#defining-fulltext-search-fields) to view the official docs for Fulltext Search Fields
