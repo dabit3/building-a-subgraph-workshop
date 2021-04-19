@@ -73,13 +73,13 @@ This command will generate a basic subgraph based off of the contract address pa
 
 > By passing in `--index-events` the CLI will automatically populate some code for us both in __schema.graphql__ as well as __src/mapping.ts__.
 
-The main configuration and definition for the subgraph lives in the __subgraph.yaml__ file. The subgraph itself consists of a few files:
+The main configuration and definition for the subgraph lives in the __subgraph.yaml__ file. The subgraph codebase consists of a few files:
 
 - __subgraph.yaml__: a YAML file containing the subgraph manifest
 - __schema.graphql__: a GraphQL schema that defines what data is stored for your subgraph, and how to query it via GraphQL
 __AssemblyScript Mappings__: AssemblyScript code that translates from the event data in Ethereum to the entities defined in your schema (e.g. mapping.ts in this tutorial)
 
-The main entries in the manifest are:
+The main entries in __subgraph.yaml__ are:
 
 - `description`: a human-readable description of what the subgraph is. This description is displayed by the Graph Explorer when the subgraph is deployed to the Hosted Service.
 - `repository`: the URL of the repository where the subgraph manifest can be found. This is also displayed by the Graph Explorer.
