@@ -102,6 +102,7 @@ type Token {
   id: ID!
   tokenID: BigInt!
   contentURI: String!
+  metadataURI: String!
   creator: User!
   owner: User!
 }
@@ -155,6 +156,7 @@ export function handleTransfer(event: TransferEvent): void {
 
     let tokenContract = TokenContract.bind(event.address);
     token.contentURI = tokenContract.tokenURI(event.params.tokenId);
+    token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
   }
   token.owner = event.params.to.toHexString();
   token.save();
@@ -250,14 +252,13 @@ We can also configure the order direction:
 ```graphql
 {
   tokens(
-    orderBy:createdAtTimestamp,
+    orderBy:id,
     orderDirection: desc
   ) {
     id
     tokenID
     contentURI
     metadataURI
-    createdAtTimestamp
   }
 }
 ```
@@ -268,44 +269,26 @@ Or choose to skip forward a certain number of results to implement some basic pa
 {
   tokens(
     skip: 100,
-    orderBy:createdAtTimestamp,
+    orderBy:id,
     orderDirection: desc
   ) {
     id
     tokenID
     contentURI
     metadataURI
-    createdAtTimestamp
   }
 }
-
 ```
 
 ## Updating a Subgraph
 
 What if we want to make some changes to the subgraph and then redeploy? This is pretty easy, so let's learn how to do it.
 
-Let's say that we want to add a new feature to our Subgraph. In addition to our existing querying capabilities, let's say that we wanted to add full text search so that we may be able to search for a certain NFT or a keyword. We can do this by defining a full text search field to our Subgraph.
+Let's say that we want to add a new feature to our Subgraph. In addition to our existing querying capabilities, let's say that we wanted to add the capabilities to sort by the timestamp that the NFT was created.
 
-Let's update __schema.graphql__ with the following:
+To do so, we need to first add a new `createdAtTimestamp` field to the `Token` entity:
 
 ```graphql
-type _Schema_
-  @fulltext(
-    name: "metadataSearch",
-    language: en
-    algorithm: rank,
-    include: [
-      {
-        entity: "Token",
-        fields: [
-          { name: "metadataURI" }
-        ]
-      }
-    ]
-  )
-
-
 type Token @entity {
   id: ID!
   tokenID: BigInt!
@@ -313,14 +296,58 @@ type Token @entity {
   metadataURI: String!
   creator: User!
   owner: User!
+  "Add new createdAtTimesamp field"
   createdAtTimestamp: BigInt!
-}
-
-type User @entity {
-  id: ID!
-  tokens: [Token!]! @derivedFrom(field: "owner")
-  created: [Token!]! @derivedFrom(field: "creator")
 }
 ```
 
-> Click [here](https://thegraph.com/docs/define-a-subgraph#defining-fulltext-search-fields) to view the official docs for Fulltext Search Fields
+Next, we need to update the mapping to save this new field:
+
+```typescript
+// update the handleTransfer function to add the createdAtTimestamp to the token object
+export function handleTransfer(event: TransferEvent): void {
+  let token = Token.load(event.params.tokenId.toString());
+  if (!token) {
+    token = new Token(event.params.tokenId.toString());
+    token.creator = event.params.to.toHexString();
+    token.tokenID = event.params.tokenId;
+    // Add the createdAtTimestamp to the token object
+    token.createdAtTimestamp = event.block.timestamp;
+
+    let tokenContract = TokenContract.bind(event.address);
+    token.contentURI = tokenContract.tokenURI(event.params.tokenId);
+    token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
+  }
+  token.owner = event.params.to.toHexString();
+  token.save();
+
+  let user = User.load(event.params.to.toHexString());
+  if (!user) {
+    user = new User(event.params.to.toHexString());
+    user.save();
+  }
+}
+```
+
+Now we can re-deploy the subgraph:
+
+
+```sh
+$ yarn deploy
+```
+
+Once the Subgraph has been redeployed, we can now query by timestamp to view the most recently created NFTS:
+
+```graphql
+{
+  tokens(
+    orderBy:createdAtTimestamp,
+    orderDirection: desc
+  ) {
+    id
+    tokenID
+    contentURI
+    metadataURI
+  }
+}
+```
