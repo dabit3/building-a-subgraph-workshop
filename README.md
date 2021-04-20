@@ -1,6 +1,6 @@
 ## The Graph - Subgraph Workshop
 
-![](header.png)
+![Subgraph Workshop](images/header.png)
 
 In this workshop, you'll learn how to build and deploy a subgraph using the [Zora NFT](https://zora.co/) smart contract.
 
@@ -216,7 +216,7 @@ If the build is successful, you should see a new __build__ folder generated in y
 
 To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the subgraph you created in the Graph console:
 
-![Graph Console](accesstoken.png)
+![Graph Console](images/accesstoken.png)
 
 Next, run the following command:
 
@@ -228,11 +228,11 @@ $ yarn deploy
 
 Once the subgraph is deployed, you should see it show up in your dashboard:
 
-![Graph Dashboard](thedashboard.png)
+![Graph Dashboard](images/thedashboard.png)
 
 When you click on the subgraph, it should open the Graph explorer:
 
-![The Zora Subgraph](thesubgraph.png)
+![The Zora Subgraph](images/thesubgraph.png)
 
 ## Querying for data
 
