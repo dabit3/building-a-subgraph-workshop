@@ -1,0 +1,31 @@
+type _Schema_
+  @fulltext(
+    name: "metadataSearch",
+    language: en
+    algorithm: rank,
+    include: [
+      {
+        entity: "Token",
+        fields: [
+          { name: "metadataURI" }
+        ]
+      }
+    ]
+  )
+
+
+type Token @entity {
+  id: ID!
+  tokenID: BigInt!
+  contentURI: String!
+  metadataURI: String!
+  creator: User!
+  owner: User!
+  createdAtTimestamp: BigInt!
+}
+
+type User @entity {
+  id: ID!
+  tokens: [Token!]! @derivedFrom(field: "owner")
+  created: [Token!]! @derivedFrom(field: "creator")
+}

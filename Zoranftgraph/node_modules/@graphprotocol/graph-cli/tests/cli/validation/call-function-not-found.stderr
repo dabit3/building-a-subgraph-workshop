@@ -1,0 +1,10 @@
+- Load subgraph from subgraph.yaml
+✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
+
+  Path: dataSources > 0 > callHandlers > 0
+  Call function with signature 'doSomething(uint256)' not present in ABI 'ExampleContract'.
+  Available call functions:
+  - <default>()
+  - owner()
+  - transferOwnership(address)
+  - upgrade(address,bytes)

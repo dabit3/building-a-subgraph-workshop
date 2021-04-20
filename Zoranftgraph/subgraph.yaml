@@ -1,0 +1,27 @@
+specVersion: 0.0.2
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Token
+    network: mainnet
+    source:
+      address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
+      abi: Token
+      startBlock: 11565020
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Token
+        - User
+      abis:
+        - name: Token
+          file: ./abis/Token.json
+      eventHandlers:
+        - event: TokenURIUpdated(indexed uint256,address,string)
+          handler: handleTokenURIUpdated
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts

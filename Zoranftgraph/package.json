@@ -1,0 +1,16 @@
+{
+  "name": "Zoranftgraph",
+  "license": "UNLICENSED",
+  "scripts": {
+    "codegen": "graph codegen",
+    "build": "graph build",
+    "deploy": "graph deploy --node https://api.thegraph.com/deploy/ --ipfs https://api.thegraph.com/ipfs/ dabit3/Zoranftgraph",
+    "create-local": "graph create --node http://localhost:8020/ dabit3/Zoranftgraph",
+    "remove-local": "graph remove --node http://localhost:8020/ dabit3/Zoranftgraph",
+    "deploy-local": "graph deploy --node http://localhost:8020/ --ipfs http://localhost:5001 dabit3/Zoranftgraph"
+  },
+  "dependencies": {
+    "@graphprotocol/graph-cli": "0.20.0",
+    "@graphprotocol/graph-ts": "0.20.0"
+  }
+}

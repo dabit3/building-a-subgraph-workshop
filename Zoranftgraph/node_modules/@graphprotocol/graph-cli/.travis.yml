@@ -1,0 +1,33 @@
+# Note: Commented out things were to support the `graph auth` test, which
+# stopped working after upgrading the dist to Xenial (or Bionic).
+
+dist: bionic
+language: node_js
+node_js:
+  - '10'
+  - '11'
+cache: yarn
+services:
+  - docker
+# before_install:
+#  - sudo apt-get install libsecret-1-dev dbus gnome-keyring python-keyring python-gnomekeyring
+# before_script:
+  # Create a new 'login' keyring; this appearas to be necessary for gnome-keyring to auto-launch
+  # properly when needed
+  # - dbus-launch /usr/bin/python -c "import gnomekeyring;gnomekeyring.create_sync('login', '');"
+script:
+  # Run the test suite
+  - yarn test
+  # Test codegen and build in the example subgraph
+  - cd examples/example-subgraph
+  - yarn
+  - ../../bin/graph codegen --debug
+  - ../../bin/graph build --debug
+  # Exercise `graph test` with another example subgraph
+  - cd ../../examples/basic-event-handlers
+  - yarn
+  - ../../bin/graph test "yarn test"
+  
+  # Run `graph auth` inside `dbus-launch` to be able to access gnome-keyring
+  # secrets via keytar
+  # - dbus-launch bash -c '../../bin/graph auth http://some-node-ip.org test-access-token'
