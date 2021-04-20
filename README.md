@@ -24,7 +24,7 @@ Here, set your graph up with the following properties:
 
 Once the subgraph is created, we will initialize the subgraph locally.
 
-### Initializing a new Subgraph using the Graph CLI
+### Initializing a new subgraph using the Graph CLI
 
 Next, install the Graph CLI:
 
@@ -36,9 +36,9 @@ $ npm install -g @graphprotocol/graph-cli
 $ yarn global add @graphprotocol/graph-cli
 ```
 
-Once the Graph CLI has been installed you can initialize a new Subgraph with the Graph CLI `init` command.
+Once the Graph CLI has been installed you can initialize a new subgraph with the Graph CLI `init` command.
 
-There are two ways to initialize a new Subgraph:
+There are two ways to initialize a new subgraph:
 
 1. From an example subgraph
 
@@ -77,7 +77,7 @@ The main configuration and definition for the subgraph lives in the __subgraph.y
 
 - __subgraph.yaml__: a YAML file containing the subgraph manifest
 - __schema.graphql__: a GraphQL schema that defines what data is stored for your subgraph, and how to query it via GraphQL
-__AssemblyScript Mappings__: AssemblyScript code that translates from the event data in Ethereum to the entities defined in your schema (e.g. mapping.ts in this tutorial)
+- __AssemblyScript Mappings__: AssemblyScript code that translates from the event data in Ethereum to the entities defined in your schema (e.g. mapping.ts in this tutorial)
 
 The entries in __subgraph.yaml__ that we will be working with are:
 
@@ -169,9 +169,9 @@ export function handleTransfer(event: TransferEvent): void {
 }
 ```
 
-These mappings will handle events for when a new token is created, transfered, or updated. When these events fire, the mappings will save the data into the Subgraph.
+These mappings will handle events for when a new token is created, transfered, or updated. When these events fire, the mappings will save the data into the subgraph.
 
-## Updating the Subgraph with the entities and mappings
+## Updating the subgraph with the entities and mappings
 
 Now we can configure the __subgraph.yaml__ to use the entities and mappings that we have just created.
 
@@ -214,7 +214,7 @@ If the build is successful, you should see a new __build__ folder generated in y
 
 ## Deploying the subgraph
 
-To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the Subgraph you created in the Graph console:
+To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the subgraph you created in the Graph console:
 
 ![Graph Console](accesstoken.png)
 
@@ -226,11 +226,11 @@ $ graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>
 $ yarn deploy
 ```
 
-Once the Subgraph is deployed, you should see it show up in your dashboard:
+Once the subgraph is deployed, you should see it show up in your dashboard:
 
 ![Graph Dashboard](thedashboard.png)
 
-When you click on the Subgraph, it should open the Graph explorer:
+When you click on the subgraph, it should open the Graph explorer:
 
 ![The Zora Subgraph](thesubgraph.png)
 
@@ -282,11 +282,11 @@ Or choose to skip forward a certain number of results to implement some basic pa
 }
 ```
 
-## Updating a Subgraph
+## Updating the subgraph
 
 What if we want to make some changes to the subgraph and then redeploy? This is pretty easy, so let's learn how to do it.
 
-Let's say that we want to add a new feature to our Subgraph. In addition to our existing querying capabilities, let's say that we wanted to add the capabilities to sort by the timestamp that the NFT was created.
+Let's say that we want to add a new feature to our subgraph. In addition to our existing querying capabilities, let's say that we wanted to add the capabilities to sort by the timestamp that the NFT was created.
 
 To do so, we need to first add a new `createdAtTimestamp` field to the `Token` entity:
 
@@ -338,7 +338,7 @@ Now we can re-deploy the subgraph:
 $ yarn deploy
 ```
 
-Once the Subgraph has been redeployed, we can now query by timestamp to view the most recently created NFTS:
+Once the subgraph has been redeployed, we can now query by timestamp to view the most recently created NFTS:
 
 ```graphql
 {
