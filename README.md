@@ -230,7 +230,7 @@ $ yarn deploy
 
 Once the subgraph is deployed, you should see it show up in your dashboard:
 
-![Graph Dashboard](images/thedashboard.png)
+![Graph Dashboard](images/dashboard.png)
 
 When you click on the subgraph, it should open the Graph explorer:
 
