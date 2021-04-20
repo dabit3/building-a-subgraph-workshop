@@ -1,5 +1,7 @@
 ## The Graph - Subgraph Workshop
 
+Learn how to build a GraphQL API on top of the Ethereum blockchain to query data from [Zora](https://zora.co/).
+
 ![Subgraph Workshop](images/header.png)
 
 In this workshop, you'll learn how to build and deploy a subgraph using the [Zora NFT](https://zora.co/) smart contract.
