@@ -1,6 +1,0 @@
-{
-  "extends": "../../std/portable.json",
-  "include": [
-    "./**/*.ts"
-  ]
-}

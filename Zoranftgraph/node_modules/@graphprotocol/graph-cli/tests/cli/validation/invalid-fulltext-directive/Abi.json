@@ -1,7 +1,0 @@
-[
-  {
-    "type": "event",
-    "name": "ExampleEvent",
-    "inputs": [{ "type": "string" }]
-  }
-]

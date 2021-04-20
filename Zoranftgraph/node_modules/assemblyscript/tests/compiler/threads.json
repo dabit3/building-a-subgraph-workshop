@@ -1,9 +1,0 @@
-{
-  "features": [
-    "threads"
-  ],
-  "asc_flags": [
-    "--memoryBase 8",
-    "--sharedMemory 1"
-  ]
-}

@@ -1,4 +1,0 @@
-type Foo @entity {
-  id: ID!
-  bars: [Bars!]! @derivedFrom(field: "foo")
-}

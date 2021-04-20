@@ -1,3 +1,0 @@
-type MyEntity @entity {
-  name: String!
-}

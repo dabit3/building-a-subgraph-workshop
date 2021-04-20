@@ -1,4 +1,0 @@
-type MyEntity @entity {
-  id: ID!
-  x: BigDecimal!
-}

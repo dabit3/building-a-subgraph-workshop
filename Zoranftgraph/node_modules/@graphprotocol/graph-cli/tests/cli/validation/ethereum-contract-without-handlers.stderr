@@ -1,6 +1,0 @@
-- Load subgraph from subgraph.yaml
-✖ Failed to load subgraph from subgraph.yaml: Error in subgraph.yaml:
-
-  Path: dataSources > 0 > mapping
-  Mapping has no blockHandlers, callHandlers or eventHandlers.
-  At least one such handler must be defined.

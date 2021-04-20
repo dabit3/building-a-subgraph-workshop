@@ -1,5 +1,0 @@
-- Load subgraph from subgraph.yaml
-✖ Failed to load subgraph from subgraph.yaml: Error in schema.graphql:
-
-  Foo:
-  - Field 'bars': Unknown type 'Bars'.
