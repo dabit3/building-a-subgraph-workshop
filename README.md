@@ -62,7 +62,8 @@ $ graph init --from-contract <CONTRACT_ADDRESS> \
 In our case we'll be using the [Zora Token Contract](https://etherscan.io/address/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7#code) so we can initilize from that contract address:
 
 ```sh
-$ graph init --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 --network mainnet --contract-name Token --index-events
+$ graph init --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 --network mainnet  \
+--contract-name Token --index-events
 
 ? Subgraph name › your-username/Zoranftsubgraph
 ? Directory to create the subgraph in › Zoranftsubgraph
