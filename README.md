@@ -133,7 +133,7 @@ In order to make working smart contracts, events and entities easy and type-safe
 
 ## Updating the subgraph with the entities and mappings
 
-Now we can configure the __subgraph.yaml__ to use the entities and mappings that we have just created.
+Now we can configure the __subgraph.yaml__ to use the entities that we have just created and configure their mappings.
 
 To do so, first update the `dataSources.mapping.entities` field with the `User` and `Token` entities:
 
@@ -143,7 +143,7 @@ entities:
   - User
 ```
 
-Next, update the `dataSources.mapping.eventHandlers` to include only the two handlers we have defined:
+Next, update the `dataSources.mapping.eventHandlers` to include only the following two event handlers:
 
 ```yaml
 eventHandlers:
