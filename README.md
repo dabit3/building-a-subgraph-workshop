@@ -308,6 +308,12 @@ type Token @entity {
 }
 ```
 
+Now we can re-run the codegen:
+
+```sh
+graph codegen
+```
+
 Next, we need to update the mapping to save this new field:
 
 ```typescript
