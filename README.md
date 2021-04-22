@@ -20,7 +20,7 @@ Next, go to [the dashboard](https://thegraph.com/explorer/dashboard) and click o
 
 Here, set your graph up with the following properties:
 
-- Subgraph Name - __Zoranftgraph__
+- Subgraph Name - __Zoranftsubgraph__
 - Subtitle - __A subgraph for querying NFTs__
 - Optional - Fill the description and GITHUB URL properties
 
@@ -64,8 +64,8 @@ In our case we'll be using the [Zora Token Contract](https://etherscan.io/addres
 ```sh
 $ graph init --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 --network mainnet --contract-name Token --index-events
 
-? Subgraph name › your-username/Zoranftgraph
-? Directory to create the subgraph in › Zoranftgraph
+? Subgraph name › your-username/Zoranftsubgraph
+? Directory to create the subgraph in › Zoranftsubgraph
 ? Ethereum network › Mainnet
 ? Contract address › 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7
 ? Contract Name · Token
