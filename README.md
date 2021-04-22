@@ -131,7 +131,40 @@ graph codegen
 
 In order to make working smart contracts, events and entities easy and type-safe, the Graph CLI generates AssemblyScript types from a combination of the subgraph's GraphQL schema and the contract ABIs included in the data sources.
 
-Next, open __src/mappings.ts__ to write the mappings that we will be needing for our Graph.
+## Updating the subgraph with the entities and mappings
+
+Now we can configure the __subgraph.yaml__ to use the entities and mappings that we have just created.
+
+To do so, first update the `dataSources.mapping.entities` field with the `User` and `Token` entities:
+
+```yaml
+entities:
+  - Token
+  - User
+```
+
+Next, update the `dataSources.mapping.eventHandlers` to include only the two handlers we have defined:
+
+```yaml
+eventHandlers:
+  - event: TokenURIUpdated(indexed uint256,address,string)
+    handler: handleTokenURIUpdated
+  - event: Transfer(indexed address,indexed address,indexed uint256)
+    handler: handleTransfer
+```
+
+Finally, update the configuration to add the `startBlock`:
+
+```yaml
+source:
+  address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
+  abi: Token
+  startBlock: 11565020
+```
+
+## Assemblyscript mappings
+
+Next, open __src/mappings.ts__ to write the mappings that we defined in our subgraph subgraph `eventHandlers`.
 
 Update the file with the following code:
 
@@ -175,37 +208,6 @@ export function handleTransfer(event: TransferEvent): void {
 ```
 
 These mappings will handle events for when a new token is created, transfered, or updated. When these events fire, the mappings will save the data into the subgraph.
-
-## Updating the subgraph with the entities and mappings
-
-Now we can configure the __subgraph.yaml__ to use the entities and mappings that we have just created.
-
-To do so, first update the `dataSources.mapping.entities` field with the `User` and `Token` entities:
-
-```yaml
-entities:
-  - Token
-  - User
-```
-
-Next, update the `dataSources.mapping.eventHandlers` to include only the two handlers we have defined:
-
-```yaml
-eventHandlers:
-  - event: TokenURIUpdated(indexed uint256,address,string)
-    handler: handleTokenURIUpdated
-  - event: Transfer(indexed address,indexed address,indexed uint256)
-    handler: handleTransfer
-```
-
-Finally, update the configuration to add the `startBlock`:
-
-```yaml
-source:
-  address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
-  abi: Token
-  startBlock: 11565020
-```
 
 ### Running a build
 
