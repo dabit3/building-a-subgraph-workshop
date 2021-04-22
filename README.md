@@ -100,7 +100,7 @@ The entities / data we will be indexing are the `Token` and `User`. This way we 
 To do this, update __schema.graphql__ with the following code:
 
 ```graphql
-type Token {
+type Token @entity {
   id: ID!
   tokenID: BigInt!
   contentURI: String!
