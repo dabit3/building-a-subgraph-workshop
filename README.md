@@ -289,6 +289,20 @@ Or choose to skip forward a certain number of results to implement some basic pa
 }
 ```
 
+Or query for users and their associated content:
+
+```graphql
+{
+  users {
+    id
+    tokens {
+      id
+      contentURI
+    }
+  }
+}
+```
+
 ## Updating the subgraph
 
 What if we want to make some changes to the subgraph and then redeploy? This is pretty easy, so let's learn how to do it.
