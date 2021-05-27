@@ -129,7 +129,7 @@ Now that we have created the GraphQL schema for our app, we can generate the ent
 graph codegen
 ```
 
-In order to make working smart contracts, events and entities easy and type-safe, the Graph CLI generates AssemblyScript types from a combination of the subgraph's GraphQL schema and the contract ABIs included in the data sources.
+In order to make working smart contracts, events and entities easy and type-safe, the Graph CLI generates [AssemblyScript](https://www.assemblyscript.org/) types from a combination of the subgraph's GraphQL schema and the contract ABIs included in the data sources.
 
 ## Updating the subgraph with the entities and mappings
 
