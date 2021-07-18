@@ -151,10 +151,10 @@ source:
 
 The final __subgraph.yml__ should look like this:
 
-```
+```yml
 specVersion: 0.0.2
 schema:
-file: ./schema.graphql
+  file: ./schema.graphql
 dataSources:
   - kind: ethereum/contract
     name: Token
@@ -227,6 +227,7 @@ export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
   token.contentURI = event.params._uri;
   token.save();
 }
+
 export function handleTokenMetadataURIURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
   let token = Token.load(event.params._tokenId.toString());
   token.metadataURI = event.params._uri;
@@ -270,7 +271,7 @@ When prompted for a version label, choose a version for the subgraph.
 
 Once the subgraph is deployed, the Studio should update with a new UI allowing you to test queries in the GraphQL playground as well as view logs and other details.
 
-<!-- ![Subgraph View](deployed.png) -->
+![Subgraph View](images/subgraphview.png)
 
 ## Querying for data
 
