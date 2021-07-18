@@ -14,59 +14,44 @@ To be successful in this workshop, you should have [Node.js](https://github.com/
 
 ### Creating the Graph project in the Graph console
 
-To get started, open the [Graph Console](https://thegraph.com/explorer/dashboard) and either sign in or create a new account.
+To get started, visit the Subgraph Studio at [https://thegraph.com/studio](https://thegraph.com/studio).
 
-Next, go to [the dashboard](https://thegraph.com/explorer/dashboard) and click on __Add Subgraph__ to create a new subgraph.
+Here, click __Connect Wallet__ and choose a wallet address to authenticate. Once you’ve authenticated, you should be able to click __Create a Subgraph__ to create a new subgraph.
 
-Here, set your graph up with the following properties:
+![Create a Subgraph](connectwallet.png)
 
-- Subgraph Name - __Zoranftsubgraph__
-- Subtitle - __A subgraph for querying NFTs__
-- Optional - Fill the description and GITHUB URL properties
+Here, give the subgraph a name and click __Continue__.
 
-Once the subgraph is created, we will initialize the subgraph locally.
+Next, you will see a view of your subgraph that enables you to add optional metadata like the subgraph description and image as well as view some useful information like the deploy key, slug, and status of the subgraph.
+
+![Create a Subgraph](metadata.png)
+
+Now that your subgraph project has been created in the Studio, you can continue by going into your local development environment and opening your terminal.
 
 ### Initializing a new subgraph using the Graph CLI
 
 Next, install the Graph CLI:
 
 ```sh
-$ npm install -g @graphprotocol/graph-cli
+npm install -g @graphprotocol/graph-cli
 
 # or
 
-$ yarn global add @graphprotocol/graph-cli
+yarn global add @graphprotocol/graph-cli
 ```
 
 Once the Graph CLI has been installed you can initialize a new subgraph with the Graph CLI `init` command.
 
-There are two ways to initialize a new subgraph:
-
-1. From an example subgraph
+In our project we'll be using the [Zora Token Contract](https://etherscan.io/address/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7#code) so we can initilize from that contract address:
 
 ```sh
-$ graph init --from-example <GITHUB_USERNAME>/<SUBGRAPH_NAME> [<DIRECTORY>]
-```
+graph init --contract-name Token \
+--index-events \
+--product subgraph-studio \
+--from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 
 
-2. From an existing smart contract
-
-If you already have a smart contract deployed to Ethereum mainnet or one of the testnets, initializing a new subgraph from this contract is an easy way to get up and running.
-
-```sh
-$ graph init --from-contract <CONTRACT_ADDRESS> \
-  [--network <ETHEREUM_NETWORK>] \
-  [--abi <FILE>] \
-  <GITHUB_USER>/<SUBGRAPH_NAME> [<DIRECTORY>]
-```
-
-In our case we'll be using the [Zora Token Contract](https://etherscan.io/address/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7#code) so we can initilize from that contract address:
-
-```sh
-$ graph init --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 --network mainnet  \
---contract-name Token --index-events
-
-? Subgraph name › your-username/Zoranftsubgraph
-? Directory to create the subgraph in › Zoranftsubgraph
+? Subgraph name › your-subgraph-name-from-studio
+? Directory to create the subgraph in › same as above (or your preferred folder name)
 ? Ethereum network › Mainnet
 ? Contract address › 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7
 ? Contract Name · Token
@@ -147,19 +132,55 @@ Next, update the `dataSources.mapping.eventHandlers` to include only the followi
 
 ```yaml
 eventHandlers:
+  - event: TokenMetadataURIUpdated(indexed uint256,address,string)
+    handler: handleTokenMetadataURIUpdated
   - event: TokenURIUpdated(indexed uint256,address,string)
     handler: handleTokenURIUpdated
   - event: Transfer(indexed address,indexed address,indexed uint256)
     handler: handleTransfer
 ```
 
-Finally, update the configuration to add the `startBlock`:
+Finally, update the configuration to add the `startBlock`. If you do not define a `startBlock`, the subgraph will begin indexing events from the [genesis block](https://www.investopedia.com/terms/g/genesis-block.asp).
 
 ```yaml
 source:
   address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
   abi: Token
   startBlock: 11565020
+```
+
+The final __subgraph.yml__ should look like this:
+
+```
+specVersion: 0.0.2
+schema:
+file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: Token
+    network: mainnet
+    source:
+      address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
+      abi: Token
+      startBlock: 11565020
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Token
+        - User
+      abis:
+        - name: Token
+          file: ./abis/Token.json
+      eventHandlers:
+        - event: TokenMetadataURIUpdated(indexed uint256,address,string)
+          handler: handleTokenMetadataURIUpdated
+        - event: TokenURIUpdated(indexed uint256,address,string)
+          handler: handleTokenURIUpdated
+        - event: Transfer(indexed address,indexed address,indexed uint256)
+          handler: handleTransfer
+      file: ./src/mapping.ts
 ```
 
 ## Assemblyscript mappings
@@ -171,6 +192,7 @@ Update the file with the following code:
 ```typescript
 import {
   TokenURIUpdated as TokenURIUpdatedEvent,
+  TokenMetadataURIUpdated as TokenMetadataURIUpdatedEvent,
   Transfer as TransferEvent,
   Token as TokenContract
 } from "../generated/Token/Token"
@@ -178,12 +200,6 @@ import {
 import {
   Token, User
 } from '../generated/schema'
-
-export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
-  let token = Token.load(event.params._tokenId.toString());
-  token.contentURI = event.params._uri;
-  token.save();
-}
 
 export function handleTransfer(event: TransferEvent): void {
   let token = Token.load(event.params.tokenId.toString());
@@ -205,6 +221,17 @@ export function handleTransfer(event: TransferEvent): void {
     user.save();
   }
 }
+
+export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
+  let token = Token.load(event.params._tokenId.toString());
+  token.contentURI = event.params._uri;
+  token.save();
+}
+export function handleTokenMetadataURIURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
+  let token = Token.load(event.params._tokenId.toString());
+  token.metadataURI = event.params._uri;
+  token.save();
+}
 ```
 
 These mappings will handle events for when a new token is created, transfered, or updated. When these events fire, the mappings will save the data into the subgraph.
@@ -214,32 +241,36 @@ These mappings will handle events for when a new token is created, transfered, o
 Next, let's run a build to make sure that everything is configured properly. To do so, run the `build` command:
 
 ```sh
-$ graph build
+graph build
 ```
 
 If the build is successful, you should see a new __build__ folder generated in your root directory.
 
 ## Deploying the subgraph
 
-To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the subgraph you created in the Graph console:
+Now that the subgraph is completed, it’s ready to be deployed to the Studio for testing.
 
-![Graph Console](images/accesstoken.png)
+Before we deploy, we first need to authenticate. To do so, open Subgraph Studio dashboard for the subgraph you created and copy the `DEPLOY KEY` to your clipboard.
 
-Next, run the following command:
+Next, open your CLI and run the following command:
 
 ```sh
-$ graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>
-
-$ yarn deploy
+graph auth --studio
 ```
 
-Once the subgraph is deployed, you should see it show up in your dashboard:
+When prompted, paste in your `DEPLOY KEY`.
 
-![Graph Dashboard](images/dashboard.png)
+Now you can deploy your subgraph using the deploy command:
 
-When you click on the subgraph, it should open the Graph explorer:
+```sh
+graph deploy --studio <subgraph-name>
+```
 
-![The Zora Subgraph](images/thesubgraph.png)
+When prompted for a version label, choose a version for the subgraph.
+
+Once the subgraph is deployed, the Studio should update with a new UI allowing you to test queries in the GraphQL playground as well as view logs and other details.
+
+<!-- ![Subgraph View](deployed.png) -->
 
 ## Querying for data
 
@@ -362,7 +393,7 @@ Now we can re-deploy the subgraph:
 
 
 ```sh
-$ yarn deploy
+yarn deploy
 ```
 
 Once the subgraph has been redeployed, we can now query by timestamp to view the most recently created NFTS:
