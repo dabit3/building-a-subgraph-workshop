@@ -18,13 +18,13 @@ To get started, visit the Subgraph Studio at [https://thegraph.com/studio](https
 
 Here, click __Connect Wallet__ and choose a wallet address to authenticate. Once you’ve authenticated, you should be able to click __Create a Subgraph__ to create a new subgraph.
 
-![Create a Subgraph](connectwallet.png)
+![Create a Subgraph](images/connectwallet.png)
 
 Here, give the subgraph a name and click __Continue__.
 
 Next, you will see a view of your subgraph that enables you to add optional metadata like the subgraph description and image as well as view some useful information like the deploy key, slug, and status of the subgraph.
 
-![Create a Subgraph](metadata.png)
+![Create a Subgraph](images/metadata.png)
 
 Now that your subgraph project has been created in the Studio, you can continue by going into your local development environment and opening your terminal.
 
