@@ -335,69 +335,7 @@ Or query for users and their associated content:
 }
 ```
 
-## Updating the subgraph
-
-What if we want to make some changes to the subgraph and then redeploy? This is pretty easy, so let's learn how to do it.
-
-Let's say that we want to add a new feature to our subgraph. In addition to our existing querying capabilities, let's say that we wanted to add the capabilities to sort by the timestamp that the NFT was created.
-
-To do so, we need to first add a new `createdAtTimestamp` field to the `Token` entity:
-
-```graphql
-type Token @entity {
-  id: ID!
-  tokenID: BigInt!
-  contentURI: String!
-  metadataURI: String!
-  creator: User!
-  owner: User!
-  "Add new createdAtTimesamp field"
-  createdAtTimestamp: BigInt!
-}
-```
-
-Now we can re-run the codegen:
-
-```sh
-graph codegen
-```
-
-Next, we need to update the mapping to save this new field:
-
-```typescript
-// update the handleTransfer function to add the createdAtTimestamp to the token object
-export function handleTransfer(event: TransferEvent): void {
-  let token = Token.load(event.params.tokenId.toString());
-  if (!token) {
-    token = new Token(event.params.tokenId.toString());
-    token.creator = event.params.to.toHexString();
-    token.tokenID = event.params.tokenId;
-    // Add the createdAtTimestamp to the token object
-    token.createdAtTimestamp = event.block.timestamp;
-
-    let tokenContract = TokenContract.bind(event.address);
-    token.contentURI = tokenContract.tokenURI(event.params.tokenId);
-    token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
-  }
-  token.owner = event.params.to.toHexString();
-  token.save();
-
-  let user = User.load(event.params.to.toHexString());
-  if (!user) {
-    user = new User(event.params.to.toHexString());
-    user.save();
-  }
-}
-```
-
-Now we can re-deploy the subgraph:
-
-
-```sh
-yarn deploy
-```
-
-Once the subgraph has been redeployed, we can now query by timestamp to view the most recently created NFTS:
+We can also query by timestamp to view the most recently created NFTS:
 
 ```graphql
 {
@@ -412,3 +350,9 @@ Once the subgraph has been redeployed, we can now query by timestamp to view the
   }
 }
 ```
+
+## Next steps
+
+Next, you may want to publish your subgraph to the decentralized network.
+
+To learn how to do this, check out the tutorial [here](https://thegraph.com/blog/building-with-subgraph-studio) and the video [here](https://www.youtube.com/watch?v=HfDgC2oNnwo).

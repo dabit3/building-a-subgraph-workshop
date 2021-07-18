@@ -20,6 +20,8 @@ dataSources:
         - name: Token
           file: ./abis/Token.json
       eventHandlers:
+        - event: TokenMetadataURIUpdated(indexed uint256,address,string)
+          handler: handleTokenMetadataURIUpdated
         - event: TokenURIUpdated(indexed uint256,address,string)
           handler: handleTokenURIUpdated
         - event: Transfer(indexed address,indexed address,indexed uint256)
