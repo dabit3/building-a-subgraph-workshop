@@ -121,7 +121,7 @@ In order to make working smart contracts, events and entities easy and type-safe
 
 Now we can configure the __subgraph.yaml__ to use the entities that we have just created and configure their mappings.
 
-To do so, first update the `dataSources.mapping.entities` field with the `User` and `Token` entities:
+To do so, first update the `dataSources.mapping.entities` field. Remove the existing entities, and replace them with only the `User` and `Token` entities:
 
 ```yaml
 entities:
