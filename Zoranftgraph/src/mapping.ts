@@ -19,6 +19,7 @@ export function handleTransfer(event: TransferEvent): void {
     let tokenContract = TokenContract.bind(event.address);
     token.contentURI = tokenContract.tokenURI(event.params.tokenId);
     token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
+    token.createdAtTimestamp = event.block.timestamp;
   }
   token.owner = event.params.to.toHexString();
   token.save();
