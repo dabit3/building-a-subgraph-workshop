@@ -47,7 +47,7 @@ In our project we'll be using the [Zora Token Contract](https://etherscan.io/add
 ```sh
 graph init --contract-name Token \
 --index-events \
---product subgraph-studio \
+--studio \
 --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 
 
 ? Subgraph name › your-subgraph-name-from-studio
@@ -91,6 +91,7 @@ type Token @entity {
   tokenID: BigInt!
   contentURI: String!
   metadataURI: String!
+  createdAtTimestamp: BigInt!
   creator: User!
   owner: User!
 }
@@ -211,6 +212,7 @@ export function handleTransfer(event: TransferEvent): void {
     let tokenContract = TokenContract.bind(event.address);
     token.contentURI = tokenContract.tokenURI(event.params.tokenId);
     token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
+    token.createdAtTimestamp = event.block.timestamp;
   }
   token.owner = event.params.to.toHexString();
   token.save();
@@ -228,7 +230,7 @@ export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
   token.save();
 }
 
-export function handleTokenMetadataURIURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
+export function handleTokenMetadataURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
   let token = Token.load(event.params._tokenId.toString());
   token.metadataURI = event.params._uri;
   token.save();
@@ -356,3 +358,6 @@ We can also query by timestamp to view the most recently created NFTS:
 Next, you may want to publish your subgraph to the decentralized network.
 
 To learn how to do this, check out the tutorial [here](https://thegraph.com/blog/building-with-subgraph-studio) and the video [here](https://www.youtube.com/watch?v=HfDgC2oNnwo).
+
+Also check out the [Openzeppelin subgraph
+](https://blog.openzeppelin.com/subgraphs-announcement/) and the repo [here](https://github.com/OpenZeppelin/openzeppelin-subgraphs).
