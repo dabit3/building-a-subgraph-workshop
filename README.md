@@ -14,17 +14,17 @@ To be successful in this workshop, you should have [Node.js](https://github.com/
 
 ### Creating the Graph project in the Graph console
 
-To get started, open the [Graph Console](https://thegraph.com/explorer/dashboard) and either sign in or create a new account.
+To get started, open the [Graph Explorer](https://thegraph.com/explorer/dashboard) and either sign in or create a new account.
 
-Next, go to [the dashboard](https://thegraph.com/explorer/dashboard) and click on __Add Subgraph__ to create a new subgraph.
+Next, go to the [dashboard](https://thegraph.com/explorer/dashboard) and click on __Add Subgraph__ to create a new subgraph.
 
-Here, set your graph up with the following properties:
+Configure your subgraph with the following properties:
 
 - Subgraph Name - __Zoranftsubgraph__
 - Subtitle - __A subgraph for querying NFTs__
 - Optional - Fill the description and GITHUB URL properties
 
-Once the subgraph is created, we will initialize the subgraph locally.
+Once the subgraph is created, we will initialize the subgraph locally using the Graph CLI.
 
 ### Initializing a new subgraph using the Graph CLI
 
@@ -42,13 +42,13 @@ Once the Graph CLI has been installed you can initialize a new subgraph with the
 
 There are two ways to initialize a new subgraph:
 
-1. From an example subgraph
+1 - From an example subgraph
 
 ```sh
 $ graph init --from-example <GITHUB_USERNAME>/<SUBGRAPH_NAME> [<DIRECTORY>]
 ```
 
-2. From an existing smart contract
+2 - From an existing smart contract
 
 If you already have a smart contract deployed to Ethereum mainnet or one of the testnets, initializing a new subgraph from this contract is an easy way to get up and running.
 
@@ -59,12 +59,13 @@ $ graph init --from-contract <CONTRACT_ADDRESS> \
   <GITHUB_USER>/<SUBGRAPH_NAME> [<DIRECTORY>]
 ```
 
-In our case we'll be using the [Zora Token Contract](https://etherscan.io/address/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7#code) so we can initilize from that contract address:
+In our case we'll be using the [Zora Token Contract](https://etherscan.io/address/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7#code) so we can initilize from that contract address by passing in the contract address using the `--from-contract` flag:
 
 ```sh
 $ graph init --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 --network mainnet  \
 --contract-name Token --index-events
 
+? Product for which to initialize › hosted-service
 ? Subgraph name › your-username/Zoranftsubgraph
 ? Directory to create the subgraph in › Zoranftsubgraph
 ? Ethereum network › Mainnet
@@ -129,7 +130,7 @@ Now that we have created the GraphQL schema for our app, we can generate the ent
 graph codegen
 ```
 
-In order to make working smart contracts, events and entities easy and type-safe, the Graph CLI generates [AssemblyScript](https://www.assemblyscript.org/) types from a combination of the subgraph's GraphQL schema and the contract ABIs included in the data sources.
+In order to make working smart contracts, events and entities easy and type-safe, the Graph CLI generates AssemblyScript types from a combination of the subgraph's GraphQL schema and the contract ABIs included in the data sources.
 
 ## Updating the subgraph with the entities and mappings
 
@@ -143,10 +144,12 @@ entities:
   - User
 ```
 
-Next, update the `dataSources.mapping.eventHandlers` to include only the following two event handlers:
+Next, update the `dataSources.mapping.eventHandlers` to include only the following three event handlers:
 
 ```yaml
 eventHandlers:
+  - event: TokenMetadataURIUpdated(indexed uint256,address,string)
+    handler: handleTokenMetadataURIUpdated
   - event: TokenURIUpdated(indexed uint256,address,string)
     handler: handleTokenURIUpdated
   - event: Transfer(indexed address,indexed address,indexed uint256)
@@ -171,6 +174,7 @@ Update the file with the following code:
 ```typescript
 import {
   TokenURIUpdated as TokenURIUpdatedEvent,
+  TokenMetadataURIUpdated as TokenMetadataURIUpdatedEvent,
   Transfer as TransferEvent,
   Token as TokenContract
 } from "../generated/Token/Token"
@@ -181,7 +185,15 @@ import {
 
 export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
   let token = Token.load(event.params._tokenId.toString());
+  if (!token) return;
   token.contentURI = event.params._uri;
+  token.save();
+}
+
+export function handleTokenMetadataURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
+  let token = Token.load(event.params._tokenId.toString());
+  if (!token) return;
+  token.metadataURI = event.params._uri;
   token.save();
 }
 
@@ -221,9 +233,9 @@ If the build is successful, you should see a new __build__ folder generated in y
 
 ## Deploying the subgraph
 
-To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the subgraph you created in the Graph console:
+To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the subgraph you created in the [Graph Explorer](https://thegraph.com/explorer/dashboard):
 
-![Graph Console](images/accesstoken.png)
+![Graph Explorer](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5h0jv4q30pgo6y5rpicl.png)
 
 Next, run the following command:
 
@@ -235,11 +247,11 @@ $ yarn deploy
 
 Once the subgraph is deployed, you should see it show up in your dashboard:
 
-![Graph Dashboard](images/dashboard.png)
+![Graph Dashboard](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hqcjw31gx209in3alisi.png)
 
 When you click on the subgraph, it should open the Graph explorer:
 
-![The Zora Subgraph](images/thesubgraph.png)
+![The Zora Subgraph](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4kne4pzbbspzz92akv9f.png)
 
 ## Querying for data
 
@@ -380,3 +392,23 @@ Once the subgraph has been redeployed, we can now query by timestamp to view the
   }
 }
 ```
+
+> The codebase for this project is located [here](https://github.com/dabit3/building-a-subgraph-workshop/tree/main/Zoranftgraph)
+
+## Next steps
+
+If you are interested in learning more about Web3, building Dapps, or building subgraphs, check out the following resources:
+
+The Graph on Twitter - [@graphprotocol](https://twitter.com/graphprotocol)
+
+[The Complete Guide to Full Stack Ethereum Development](https://dev.to/dabit3/the-complete-guide-to-full-stack-ethereum-development-3j13)
+
+[The Graph Discord](thegraph.com/discord)
+
+[Solidity Docs](https://docs.soliditylang.org/)
+
+[Ethereum Developer Documentation](https://ethereum.org/en/developers/docs/)
+
+Austin Griffith on Twitter [@austingriffith](https://twitter.com/austingriffith) & [Scaffold Eth](https://github.com/austintgriffith/scaffold-eth)
+
+[Crypto Zombies](https://cryptozombies.io/)

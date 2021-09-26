@@ -1,5 +1,6 @@
 import {
   TokenURIUpdated as TokenURIUpdatedEvent,
+  TokenMetadataURIUpdated as TokenMetadataURIUpdatedEvent,
   Transfer as TransferEvent,
   Token as TokenContract
 } from "../generated/Token/Token"
@@ -10,7 +11,15 @@ import {
 
 export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
   let token = Token.load(event.params._tokenId.toString());
+  if (!token) return;
   token.contentURI = event.params._uri;
+  token.save();
+}
+
+export function handleTokenMetadataURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
+  let token = Token.load(event.params._tokenId.toString());
+  if (!token) return;
+  token.metadataURI = event.params._uri;
   token.save();
 }
 
