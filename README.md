@@ -1,10 +1,10 @@
 ## The Graph - Subgraph Workshop
 
-Learn how to build a GraphQL API on top of the Ethereum blockchain to query data from [Zora](https://zora.co/).
+Learn how to build a GraphQL API on top of the Ethereum blockchain to query data from [Foundation](https://foundation.app/).
 
 ![Subgraph Workshop](images/header.png)
 
-In this workshop you'll learn how to build and deploy a subgraph using the [Zora NFT](https://zora.co/) smart contract.
+In this workshop you'll learn how to build and deploy a subgraph using the [Foundation NFT](https://foundation.app/) smart contract.
 
 ### Prerequisites
 
@@ -12,15 +12,13 @@ To be successful in this workshop, you should have [Node.js](https://github.com/
 
 ## Getting started
 
-### Creating the Graph project in the Graph console
-
 To get started, open the [Graph Explorer](https://thegraph.com/explorer/dashboard) and either sign in or create a new account.
 
 Next, go to the [dashboard](https://thegraph.com/explorer/dashboard) and click on __Add Subgraph__ to create a new subgraph.
 
 Configure your subgraph with the following properties:
 
-- Subgraph Name - __Zoranftsubgraph__
+- Subgraph Name - __Foundationsubgraph__
 - Subtitle - __A subgraph for querying NFTs__
 - Optional - Fill the description and GITHUB URL properties
 
@@ -59,17 +57,17 @@ $ graph init --from-contract <CONTRACT_ADDRESS> \
   <GITHUB_USER>/<SUBGRAPH_NAME> [<DIRECTORY>]
 ```
 
-In our case we'll be using the [Zora Token Contract](https://etherscan.io/address/0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7#code) so we can initilize from that contract address by passing in the contract address using the `--from-contract` flag:
+In our case we'll be starting with the [Foundation proxy contract](https://etherscan.io/address/0xc9fe4ffc4be41d93a1a7189975cd360504ee361a#code) so we can initialize from that contract address by passing in the contract address using the `--from-contract` flag:
 
 ```sh
-$ graph init --from-contract 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7 --network mainnet  \
+$ graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --network mainnet  \
 --contract-name Token --index-events
 
 ? Product for which to initialize › hosted-service
-? Subgraph name › your-username/Zoranftsubgraph
-? Directory to create the subgraph in › Zoranftsubgraph
+? Subgraph name › your-username/Foundationsubgraph
+? Directory to create the subgraph in › Foundationsubgraph
 ? Ethereum network › Mainnet
-? Contract address › 0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7
+? Contract address › 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a
 ? Contract Name · Token
 ```
 
@@ -105,8 +103,10 @@ To do this, update __schema.graphql__ with the following code:
 type Token @entity {
   id: ID!
   tokenID: BigInt!
-  contentURI: String!
-  metadataURI: String!
+  contentURI: String
+  tokenIPFSPath: String
+  name: String!
+  createdAtTimestamp: BigInt!
   creator: User!
   owner: User!
 }
@@ -147,16 +147,13 @@ entities:
 Next, update the `dataSources.mapping.eventHandlers` to include only the following three event handlers:
 
 ```yaml
-eventHandlers:
-  - event: TokenMetadataURIUpdated(indexed uint256,address,string)
-    handler: handleTokenMetadataURIUpdated
-  - event: TokenURIUpdated(indexed uint256,address,string)
-    handler: handleTokenURIUpdated
-  - event: Transfer(indexed address,indexed address,indexed uint256)
-    handler: handleTransfer
+- event: TokenIPFSPathUpdated(indexed uint256,indexed string,string)
+  handler: handleTokenIPFSPathUpdated
+- event: Transfer(indexed address,indexed address,indexed uint256)
+  handler: handleTransfer
 ```
 
-Finally, update the configuration to add the `startBlock`:
+Finally, update the configuration to add the startBlock and change the contract `address` to the [main contract](https://etherscan.io/address/0x3B3ee1931Dc30C1957379FAc9aba94D1C48a5405) address:
 
 ```yaml
 source:
@@ -173,29 +170,14 @@ Update the file with the following code:
 
 ```typescript
 import {
-  TokenURIUpdated as TokenURIUpdatedEvent,
-  TokenMetadataURIUpdated as TokenMetadataURIUpdatedEvent,
+  TokenIPFSPathUpdated as TokenIPFSPathUpdatedEvent,
   Transfer as TransferEvent,
-  Token as TokenContract
+  Token as TokenContract,
 } from "../generated/Token/Token"
 
 import {
   Token, User
 } from '../generated/schema'
-
-export function handleTokenURIUpdated(event: TokenURIUpdatedEvent): void {
-  let token = Token.load(event.params._tokenId.toString());
-  if (!token) return;
-  token.contentURI = event.params._uri;
-  token.save();
-}
-
-export function handleTokenMetadataURIUpdated(event: TokenMetadataURIUpdatedEvent): void {
-  let token = Token.load(event.params._tokenId.toString());
-  if (!token) return;
-  token.metadataURI = event.params._uri;
-  token.save();
-}
 
 export function handleTransfer(event: TransferEvent): void {
   let token = Token.load(event.params.tokenId.toString());
@@ -203,23 +185,32 @@ export function handleTransfer(event: TransferEvent): void {
     token = new Token(event.params.tokenId.toString());
     token.creator = event.params.to.toHexString();
     token.tokenID = event.params.tokenId;
-
+  
     let tokenContract = TokenContract.bind(event.address);
     token.contentURI = tokenContract.tokenURI(event.params.tokenId);
-    token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
+    token.tokenIPFSPath = tokenContract.getTokenIPFSPath(event.params.tokenId);
+    token.name = tokenContract.name();
+    token.createdAtTimestamp = event.block.timestamp;
   }
   token.owner = event.params.to.toHexString();
   token.save();
-
+    
   let user = User.load(event.params.to.toHexString());
   if (!user) {
     user = new User(event.params.to.toHexString());
     user.save();
   }
 }
+
+export function handleTokenURIUpdated(event: TokenIPFSPathUpdatedEvent): void {
+  let token = Token.load(event.params.tokenId.toString());
+  if (!token) return
+  token.tokenIPFSPath = event.params.tokenIPFSPath;
+  token.save();
+}
 ```
 
-These mappings will handle events for when a new token is created, transfered, or updated. When these events fire, the mappings will save the data into the subgraph.
+These mappings will handle events for when a new token is created, transferred, or updated. When these events fire, the mappings will save the data into the subgraph.
 
 ### Running a build
 
@@ -233,9 +224,9 @@ If the build is successful, you should see a new __build__ folder generated in y
 
 ## Deploying the subgraph
 
-To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for the subgraph you created in the [Graph Explorer](https://thegraph.com/explorer/dashboard):
+To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you will first need to copy the __Access token__ for your account, available in the [Graph Explorer](https://thegraph.com/explorer/dashboard):
 
-![Graph Explorer](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/5h0jv4q30pgo6y5rpicl.png)
+![Graph Explorer](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/820lwqh8yo3iyu7fsbhj.jpg)
 
 Next, run the following command:
 
@@ -247,11 +238,11 @@ $ yarn deploy
 
 Once the subgraph is deployed, you should see it show up in your dashboard:
 
-![Graph Dashboard](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/hqcjw31gx209in3alisi.png)
+![Graph Dashboard](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/q548jeq4kuhgddrjv0dv.jpg)
 
 When you click on the subgraph, it should open the Graph explorer:
 
-![The Zora Subgraph](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/4kne4pzbbspzz92akv9f.png)
+![The Foundation Subgraph](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/9qremconu1io72z3g6pa.png)
 
 ## Querying for data
 
@@ -263,7 +254,7 @@ Now that we are in the dashboard, we should be able to start querying for data. 
     id
     tokenID
     contentURI
-    metadataURI
+    tokenIPFSPath
   }
 }
 ```
@@ -279,7 +270,7 @@ We can also configure the order direction:
     id
     tokenID
     contentURI
-    metadataURI
+    tokenIPFSPath
   }
 }
 ```
@@ -296,7 +287,7 @@ Or choose to skip forward a certain number of results to implement some basic pa
     id
     tokenID
     contentURI
-    metadataURI
+    tokenIPFSPath
   }
 }
 ```
@@ -315,74 +306,12 @@ Or query for users and their associated content:
 }
 ```
 
-## Updating the subgraph
-
-What if we want to make some changes to the subgraph and then redeploy? This is pretty easy, so let's learn how to do it.
-
-Let's say that we want to add a new feature to our subgraph. In addition to our existing querying capabilities, let's say that we wanted to add the capabilities to sort by the timestamp that the NFT was created.
-
-To do so, we need to first add a new `createdAtTimestamp` field to the `Token` entity:
-
-```graphql
-type Token @entity {
-  id: ID!
-  tokenID: BigInt!
-  contentURI: String!
-  metadataURI: String!
-  creator: User!
-  owner: User!
-  "Add new createdAtTimesamp field"
-  createdAtTimestamp: BigInt!
-}
-```
-
-Now we can re-run the codegen:
-
-```sh
-graph codegen
-```
-
-Next, we need to update the mapping to save this new field:
-
-```typescript
-// update the handleTransfer function to add the createdAtTimestamp to the token object
-export function handleTransfer(event: TransferEvent): void {
-  let token = Token.load(event.params.tokenId.toString());
-  if (!token) {
-    token = new Token(event.params.tokenId.toString());
-    token.creator = event.params.to.toHexString();
-    token.tokenID = event.params.tokenId;
-    // Add the createdAtTimestamp to the token object
-    token.createdAtTimestamp = event.block.timestamp;
-
-    let tokenContract = TokenContract.bind(event.address);
-    token.contentURI = tokenContract.tokenURI(event.params.tokenId);
-    token.metadataURI = tokenContract.tokenMetadataURI(event.params.tokenId);
-  }
-  token.owner = event.params.to.toHexString();
-  token.save();
-
-  let user = User.load(event.params.to.toHexString());
-  if (!user) {
-    user = new User(event.params.to.toHexString());
-    user.save();
-  }
-}
-```
-
-Now we can re-deploy the subgraph:
-
-
-```sh
-$ yarn deploy
-```
-
-Once the subgraph has been redeployed, we can now query by timestamp to view the most recently created NFTS:
+We can also query by timestamp to view the most recently created NFTS:
 
 ```graphql
 {
   tokens(
-    orderBy:createdAtTimestamp,
+    orderBy: createdAtTimestamp,
     orderDirection: desc
   ) {
     id
@@ -393,7 +322,7 @@ Once the subgraph has been redeployed, we can now query by timestamp to view the
 }
 ```
 
-> The codebase for this project is located [here](https://github.com/dabit3/building-a-subgraph-workshop/tree/main/Zoranftgraph)
+> The codebase for this project is located [here](https://github.com/dabit3/building-a-subgraph-workshop/tree/main/Foundationsubgraph)
 
 ## Next steps
 
