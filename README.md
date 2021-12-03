@@ -318,7 +318,6 @@ We can also query by timestamp to view the most recently created NFTS:
     id
     tokenID
     contentURI
-    metadataURI
   }
 }
 ```
