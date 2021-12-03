@@ -63,6 +63,7 @@ In our case we'll be starting with the [Foundation proxy contract](https://ether
 graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --network mainnet  \
 --contract-name Token --index-events
 
+? Protocol › ethereum
 ? Product for which to initialize › hosted-service
 ? Subgraph name › your-username/Foundationsubgraph
 ? Directory to create the subgraph in › Foundationsubgraph
