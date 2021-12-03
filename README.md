@@ -29,11 +29,11 @@ Once the subgraph is created, we will initialize the subgraph locally using the 
 Next, install the Graph CLI:
 
 ```sh
-$ npm install -g @graphprotocol/graph-cli
+npm install -g @graphprotocol/graph-cli
 
 # or
 
-$ yarn global add @graphprotocol/graph-cli
+yarn global add @graphprotocol/graph-cli
 ```
 
 Once the Graph CLI has been installed you can initialize a new subgraph with the Graph CLI `init` command.
@@ -43,7 +43,7 @@ There are two ways to initialize a new subgraph:
 1 - From an example subgraph
 
 ```sh
-$ graph init --from-example <GITHUB_USERNAME>/<SUBGRAPH_NAME> [<DIRECTORY>]
+graph init --from-example <GITHUB_USERNAME>/<SUBGRAPH_NAME> [<DIRECTORY>]
 ```
 
 2 - From an existing smart contract
@@ -51,7 +51,7 @@ $ graph init --from-example <GITHUB_USERNAME>/<SUBGRAPH_NAME> [<DIRECTORY>]
 If you already have a smart contract deployed to Ethereum mainnet or one of the testnets, initializing a new subgraph from this contract is an easy way to get up and running.
 
 ```sh
-$ graph init --from-contract <CONTRACT_ADDRESS> \
+graph init --from-contract <CONTRACT_ADDRESS> \
   [--network <ETHEREUM_NETWORK>] \
   [--abi <FILE>] \
   <GITHUB_USER>/<SUBGRAPH_NAME> [<DIRECTORY>]
@@ -60,7 +60,7 @@ $ graph init --from-contract <CONTRACT_ADDRESS> \
 In our case we'll be starting with the [Foundation proxy contract](https://etherscan.io/address/0xc9fe4ffc4be41d93a1a7189975cd360504ee361a#code) so we can initialize from that contract address by passing in the contract address using the `--from-contract` flag:
 
 ```sh
-$ graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --network mainnet  \
+graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --network mainnet  \
 --contract-name Token --index-events
 
 ? Product for which to initialize › hosted-service
@@ -217,7 +217,7 @@ These mappings will handle events for when a new token is created, transferred, 
 Next, let's run a build to make sure that everything is configured properly. To do so, run the `build` command:
 
 ```sh
-$ graph build
+graph build
 ```
 
 If the build is successful, you should see a new __build__ folder generated in your root directory.
@@ -231,9 +231,9 @@ To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you w
 Next, run the following command:
 
 ```sh
-$ graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>
+graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>
 
-$ yarn deploy
+yarn deploy
 ```
 
 Once the subgraph is deployed, you should see it show up in your dashboard:
