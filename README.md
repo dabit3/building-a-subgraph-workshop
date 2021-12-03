@@ -158,7 +158,7 @@ Finally, update the configuration to add the startBlock and change the contract 
 
 ```yaml
 source:
-  address: "0xabEFBc9fD2F806065b4f3C237d4b59D9A97Bcac7"
+  address: "0x3B3ee1931Dc30C1957379FAc9aba94D1C48a5405"
   abi: Token
   startBlock: 11565020
 ```
