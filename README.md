@@ -12,15 +12,21 @@ To be successful in this workshop, you should have [Node.js](https://github.com/
 
 ## Getting started
 
-To get started, open the [Graph Explorer](https://thegraph.com/explorer/dashboard) and either sign in or create a new account.
+To get started, open the [Graph Hosted Service](https://thegraph.com/hosted-service/dashboard) and either sign in or create a new account.
 
-Next, go to the [dashboard](https://thegraph.com/explorer/dashboard) and click on __Add Subgraph__ to create a new subgraph.
+![Hosted studio dashboard](images/dash1.png)
+
+Next, go to the [dashboard](https://thegraph.com/hosted-service/dashboard) and click on __Add Subgraph__ to create a new subgraph.
+
+![Hosted studio dashboard](images/dash2.png)
 
 Configure your subgraph with the following properties:
 
 - Subgraph Name - __Foundationsubgraph__
 - Subtitle - __A subgraph for querying NFTs__
 - Optional - Fill the description and GITHUB URL properties
+
+![Hosted studio dashboard](images/dash3.png)
 
 Once the subgraph is created, we will initialize the subgraph locally using the Graph CLI.
 
