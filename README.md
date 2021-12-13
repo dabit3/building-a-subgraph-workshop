@@ -12,7 +12,7 @@ To be successful in this workshop, you should have [Node.js](https://github.com/
 
 ## Getting started
 
-To get started, open the [Graph Hosted Service](https://thegraph.com/hosted-service/dashboard) and either sign in or create a new account.
+To get started, open [The Graph Hosted Service](https://thegraph.com/hosted-service/dashboard) and either sign in or create a new account.
 
 ![Hosted studio dashboard](images/dash1.png)
 
