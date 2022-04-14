@@ -63,7 +63,9 @@ graph init --from-contract <CONTRACT_ADDRESS> \
   <GITHUB_USER>/<SUBGRAPH_NAME> [<DIRECTORY>]
 ```
 
-In our case we'll be starting with the [Foundation proxy contract](https://etherscan.io/address/0xc9fe4ffc4be41d93a1a7189975cd360504ee361a#code) so we can initialize from that contract address by passing in the contract address using the `--from-contract` flag:
+In our case we'll be starting with the [Foundation proxy contract](https://etherscan.io/address/0xc9fe4ffc4be41d93a1a7189975cd360504ee361a#code) so we can initialize from that contract address by passing in the contract address using the `--from-contract` flag.
+
+__Run the following command:__
 
 ```sh
 graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --protocol ethereum \
