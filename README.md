@@ -46,13 +46,13 @@ Once the Graph CLI has been installed you can initialize a new subgraph with the
 
 There are two ways to initialize a new subgraph:
 
-1 - From an example subgraph
+1 - From an example subgraph (example command, do not run)
 
 ```sh
 graph init --from-example <GITHUB_USERNAME>/<SUBGRAPH_NAME> [<DIRECTORY>]
 ```
 
-2 - From an existing smart contract
+2 - From an existing smart contract (example command, do not run)
 
 If you already have a smart contract deployed to Ethereum mainnet or one of the testnets, initializing a new subgraph from this contract is an easy way to get up and running.
 
@@ -66,10 +66,9 @@ graph init --from-contract <CONTRACT_ADDRESS> \
 In our case we'll be starting with the [Foundation proxy contract](https://etherscan.io/address/0xc9fe4ffc4be41d93a1a7189975cd360504ee361a#code) so we can initialize from that contract address by passing in the contract address using the `--from-contract` flag:
 
 ```sh
-graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --network mainnet  \
---contract-name Token --index-events
+graph init --from-contract 0xc9fe4ffc4be41d93a1a7189975cd360504ee361a --protocol ethereum \
+--network mainnet --contract-name Token --index-events
 
-? Protocol › ethereum
 ? Product for which to initialize › hosted-service
 ? Subgraph name › your-username/Foundationsubgraph
 ? Directory to create the subgraph in › Foundationsubgraph
@@ -238,7 +237,9 @@ To deploy, we can run the `deploy` command using the Graph CLI. To deploy, you w
 Next, run the following command:
 
 ```sh
-graph auth https://api.thegraph.com/deploy/ <ACCESS_TOKEN>
+$ graph auth
+✔ Product for which to initialize · hosted-service
+✔ Deploy key · ********************************
 
 yarn deploy
 ```
